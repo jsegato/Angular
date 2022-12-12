@@ -1,0 +1,104 @@
+<mat-card>
+    <form [formGroup]="formGroup" class="form">
+
+        <mat-card-title>
+            Cadastro Pedido
+        </mat-card-title>
+
+        <div class="row">
+            <div class="col col-8">
+                <mat-form-field class="w-100">
+                    <mat-label>Cliente</mat-label>
+                    <input type="text" placeholder="Digite o nome do cliente" aria-label="Cliente" matInput
+                        formControlName="cliente_id" [matAutocomplete]="auto">
+                    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="displayFnClient">
+                        <mat-option *ngFor="let client of clients" [value]="client">
+                            {{client.nome}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <mat-card>
+            <h3>Itens</h3>
+            <div formArrayName="itens">
+
+                <div class="d-flex mb-1 justify-content-end" *ngFor="let item of itens['controls']; let i=index"
+                    [formGroupName]="i">
+    
+                    <div class="col-4 pe-4">
+                        <mat-form-field class="w-100">
+                            <mat-label>Produto</mat-label>
+                            <input type="text" placeholder="Digite o nome do produto" aria-label="Produto" matInput
+                                formControlName="produto_id" [matAutocomplete]="auto">
+                            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="calcTotalItem(i, $event)"
+                                [displayWith]="displayFnProduct">
+                                <mat-option *ngFor="let produto of products" [value]="produto">
+                                    {{produto.nome}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+    
+                    <div class="col-2 pe-4">
+                        <mat-form-field class="w-100">
+                            <input matInput type="number" placeholder="Quantidade" formControlName="quantidade"
+                                (change)="calcTotalItem(i)">
+                        </mat-form-field>
+                    </div>
+    
+                    <div class="col-2 pe-4">
+                        <mat-form-field class="w-100">
+                            <input matInput type="number" placeholder="Valor Unitario" readonly
+                                formControlName="valor_unitario">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-3 pe-4">
+                        <mat-form-field class="w-100">
+                            <input matInput type="number" placeholder="Valor Total" readonly formControlName="valor_total">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-1 d-flex justify-content-center align-items-center">
+                        <div>
+                            <button class="btn btn-sm btn-danger" (click)="deleteItem(i)">Excluir</button>
+                        </div>
+                        
+                    </div>
+                </div>
+    
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <h3>
+                    Total do Pedido {{formGroup.get('total_venda')?.value | currency: "R$ "}}
+                </h3>
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <button type="button" class="btn  btn-secondary" (click)="addNewItem()">
+                    Adicionar Item
+                </button>
+            </div>
+
+        </mat-card>
+
+
+        <div class="d-flex mt-4">
+            <div class="me-3">
+                <button type="button" class="btn  btn-secondary" (click)="goBack()">
+                    Voltar
+                </button>
+            </div>
+
+            <div>
+                <button type="button" class="btn" [ngClass]="mode == modeEnum.DELETE?  'btn-danger' : 'btn-success'"
+                    (click)="submit()" [disabled]="!formGroup.valid" >
+                    {{btnMode}}
+                </button>
+            </div>
+        </div>
+
+    </form>
+
+</mat-card>
